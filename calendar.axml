@@ -1,0 +1,37 @@
+<view class="mycalendarv2" style="display:{{show?'block':'none'}}">
+  <view class="v2-title">
+  <view class="select-box">
+    <view class="box-item">
+      <view a:if="{{sel.begin.act == false}}">开始日期</view>
+      <view class="mainColor" a:if="{{sel.begin.act}}">{{sel.begin.month}}月{{sel.begin.day}}日</view>
+    </view>
+    <view class="box-item">
+      <image src="/img/calendar-flag-icon.png" class="box-item-image" />
+    </view>
+    <view class="box-item">
+      <view a:if="{{sel.end.act == false}}">结束日期</view>
+      <view class="mainColor" a:if="{{sel.end.act}}">{{sel.end.month}}月{{sel.end.day}}日</view>
+    </view>
+  </view>
+  <view class="week-title">
+    <view class='week-item' a:key="{{index}}" a:for="{{['日','一','二','三','四','五','六']}}">{{item}}</view>
+  </view>
+  </view>
+  
+  <scroll-view class="day-box" onScrollToLower="dayToLowerEvent" scroll-y="true">
+    <view class="month-box" a:for="{{months}}" a:for-item="m" a:key="{{mindex}}" a:for-index="mindex">
+        <view class='mycalendar-title'> {{m.year}}年{{m.month}}月</view>
+        <view class='mycalendar-days-box'>
+            <view class='mycalendar-days' onTap='setDayEvent' data-monthIndex="{{mindex}}" data-index="{{index}}" a:key="{{index}}" a:for="{{m.days}}">
+              <view class="{{item.cls}}">{{item.day}}</view>
+              <view class="day-label" a:if="{{item.label != ''}}">{{item.label}}</view>
+            </view>
+        </view>
+    </view>
+  </scroll-view>
+
+  <view class='mycalendar-btns'>
+    <view onTap="selectEvent" class='btn-right mainBg'>确认选择</view>
+  </view>
+
+</view>
