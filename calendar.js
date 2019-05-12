@@ -7,44 +7,62 @@ Component({
     sel:{
       begin:{act:false,year:0,month:0,day:0,mi:0,di:0},
       end:{act:false,year:0,month:0,day:0,mi:0,di:0}
-    }
+    },
+    inviewId:'month-view1'
   },
   props: {
     onSelectEvent:()=>{},
     show:false,
     limit:1,
-    actColor:'#51BF85'
+    actColor:'#51BF85',
+    range:true
   },
   didMount() {
     var year = new Date().getFullYear();
     var month = new Date().getMonth() +1;
-    this.addMonth(year,month);
-    this.pushMonth();
-    this.pushMonth();
+    this.addMonth(year,month,true);
+    this.pushMonth(true);
+    this.pushMonth(true);
   },
   didUpdate() {},
   didUnmount() {},
   methods: {
-    addMonth(year,month){ // 月自动增加
+    addMonth(year,month,append){ // 月自动增加
       let obj = {days:[],year:year,month:month};
       var week = new Date(year,(month-1),1).getDay();// 获取当月的第一天的星期数
       for (var i = 0; i < week; i++){
         obj.days.push({day: '', disabled:true ,cls: '',act:false,label:''});
       }
-      var actDay = this.data.sel.begin.act==false || this.props.price == '' ?null:new Date(this.data.sel.begin.year,this.data.sel.begin.month,this.data.sel.begin.day);
+      // var actDay = this.data.sel.begin.act==false || this.props.price == '' ?null:new Date(this.data.sel.begin.year,this.data.sel.begin.month,this.data.sel.begin.day);
       for(var i = 1 ;i <= this.getDaysCont(year,month);i++){
-        var gaps = this.nowDays(year,month,i);
-        var cls = gaps < 0 ? 'disabled' : '';
-        obj.days.push({cls:cls,disabled:(gaps<0),day:(gaps == 0?"今":i),act:false,label:''});
+         var gaps = this.nowDays(year,month,i);
+         var cls = ''; //gaps < 0 ? 'disabled' : '';
+        obj.days.push({cls:cls,disabled:false,day:(gaps == 0?"今":i),act:false,label:''});
       }
-      this.setData({months:this.data.months.concat(obj)});
+      if(append){
+        this.setData({months:this.data.months.concat(obj)});
+      }else{
+        let months = this.data.months;
+        months.splice(0,0,obj);
+        this.setData({months:months,toTop:800});
+      }
     },
     getDaysCont(year,month){ // 获取月份的最大天数
       var leapYear = ((year % 4 == 0) && (year % 100 != 0 || year % 400 == 0)) ? 1:0;
       return [31, 28 + leapYear, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month-1];
     },
     dayToLowerEvent(e){ // 滚动到底部时
-      this.pushMonth();
+      this.pushMonth(true);
+    },
+    daytoUpperEvent(e){
+      var lastMonth = this.data.months[0];
+      let year = lastMonth.year;
+      let month = lastMonth.month - 1;
+      if(month < 1){
+        year = year - 1;
+        month = 12;
+      }
+      this.addMonth(year,month,false);
     },
     pushMonth(){
       var lastMonth = this.data.months[this.data.months.length -1];
@@ -54,7 +72,7 @@ Component({
         year = year +1;
         month = 1;
       }
-      this.addMonth(year,month);
+      this.addMonth(year,month,true);
     },
     nowDays(year,month,day){
       var now = new Date();
@@ -73,6 +91,11 @@ Component({
       var month = this.data.months[monthIndex];
       var day = month.days[index];
       if(day.disabled){return;} // 禁用日期不可点击
+      if(this.props.range == false){ // 单选
+        let ret = {begin:this.getformatData({year:month.year,month:month.month,day:day.day})};
+        this.props.onSelectEvent(ret);
+        return;
+      }
       if(this.data.sel.begin.act && this.data.sel.end.act){// 开始，结束日期都选择了，则清空
         let update = {sel:{begin:{act:false,year:0,month:0,day:0,mi:0,di:0},end:{act:false,year:0,month:0,day:0,mi:0,di:0}}};
         for(var i = 0 ; i < this.data.months.length; i ++){
@@ -94,7 +117,6 @@ Component({
       }
       let lmitDay = this.selDayGaps(this.data.sel.begin,selObj); // 计算2个日期间隔天数
       if(Math.abs(lmitDay)+1 < this.props.limit){
-        console.log(Math.abs(lmitDay)+1+"=="+this.props.limit);
         my.showToast({type:'fail',content:('最少选择'+this.props.limit+'天')});
         return;
       }
