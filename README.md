@@ -16,9 +16,9 @@
   ```
 
  ### 支持功能
+ * 支持日期单选，也支持日期范围选择
  * 支持自定义最小选中天数
  * 支持自定义日历的主题色
 
 ### DEMO
 ![支付宝扫码预览](https://mobilecodec.alipay.com/show.htm?code=s6x09027oqrlqyl5bk7jq29)
-
