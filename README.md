@@ -20,5 +20,13 @@
  * 支持自定义最小选中天数
  * 支持自定义日历的主题色
 
+### 参数说明
+ 参数名 | 参数类型 | 默认值 | 说明 |
+------------ | ------------- | ---- | ---|
+show | Boolean | false | 是否显示 |
+limit | Number | 1 | 如果是范围选择最小间隔天数 |
+actColor | String | #51BF85 | 主题色 |
+onSelectEvent | Event | 无 | 选中后的回调函数，包含选中的日期 |
+
 ### DEMO
 ![支付宝扫码预览](https://mobilecodec.alipay.com/show.htm?code=s6x09027oqrlqyl5bk7jq29)
