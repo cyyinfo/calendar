@@ -11,8 +11,8 @@
     }
   ```
 * 最后在页面添加组件
-  ```javascript
-    <cal show="{{show}}" limit="{{limit}}" actColor="{{actColor}}" onSelectEvent="onSelectEvent"></cal>
+  ```html
+    <cal show="{{show}}" limit="{{limit}}" actColor="{{actColor}}" range="{{range}}" onSelectEvent="onSelectEvent"></cal>
   ```
 
  ### 支持功能
