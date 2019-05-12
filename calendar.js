@@ -12,9 +12,8 @@ Component({
   props: {
     onSelectEvent:()=>{},
     show:false,
-    limit:10,
-    price:'',
-    num:1
+    limit:1,
+    actColor:'#51BF85'
   },
   didMount() {
     var year = new Date().getFullYear();
@@ -94,7 +93,8 @@ Component({
         return;
       }
       let lmitDay = this.selDayGaps(this.data.sel.begin,selObj); // 计算2个日期间隔天数
-      if(Math.abs(lmitDay) < this.props.limit){
+      if(Math.abs(lmitDay)+1 < this.props.limit){
+        console.log(Math.abs(lmitDay)+1+"=="+this.props.limit);
         my.showToast({type:'fail',content:('最少选择'+this.props.limit+'天')});
         return;
       }
@@ -128,29 +128,25 @@ Component({
         }
       }
       this.setData(update);
+      // this.selectEvent();
     },
     setDayinfo(obj,mindex,dindex,cls,act,type){
-        obj['months['+mindex+'].days['+dindex+"].cls"] = cls; //'day-select day-end';
+        obj['months['+mindex+'].days['+dindex+"].cls"] = type=='结束'?(cls+" day-end"):cls; //'day-select day-end';
         obj['months['+mindex+'].days[' + dindex + '].act'] = act; // true;
-        obj['months['+mindex+'].days[' + dindex + '].label'] = type; // 'gui';
+        obj['months['+mindex+'].days[' + dindex + '].label'] = type; //;
     },
     selDayGaps(begin,end){
-      let bd = new Date(begin.year,begin.month - 1,begin.day);
-      let ed = new Date(end.year,end.month - 1,end.day);
+      var bgday = this.getBeginDay(begin);
+      var egday = this.getBeginDay(end);
+      let bd = new Date(begin.year,begin.month - 1,bgday);
+      let ed = new Date(end.year,end.month - 1,egday);
       return this.comDays(bd,ed);
     },
-    selectEvent(e){
+    selectEvent(){
       if(this.data.sel.begin.act == false || this.data.sel.end.act == false){return;}
-      var beginDay = this.getBeginDay(this.data.sel.begin);
-      let bd = new Date(this.data.sel.begin.year,this.data.sel.begin.month - 1,beginDay);
-      let ed = new Date(this.data.sel.end.year,this.data.sel.end.month - 1,this.data.sel.end.day);
       let ret = {
         begin:this.getformatData(this.data.sel.begin),
-        end:this.getformatData(this.data.sel.end),
-        beginWeek:bd.getDay(),
-        endWeek:ed.getDay(),
-        beginShow:(this.data.sel.begin.month+'月'+beginDay+'日'),
-        endShow:(this.data.sel.end.month+'月'+this.data.sel.end.day+'日')
+        end:this.getformatData(this.data.sel.end)
       };
       this.props.onSelectEvent(ret);
     },
